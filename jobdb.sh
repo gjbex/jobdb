@@ -37,7 +37,7 @@ jdbsub () {
         return 0
     fi
 # get jobdb directory, if it doesn't exist, create it
-    jdbdir
+    jdbdir 'new'
     local EXIT_CODE=$?
     if [ ${EXIT_CODE} -eq 2 ]
     then
@@ -49,7 +49,8 @@ jdbsub () {
     local JOBDB_FILE="${JOBDB_DIR}/jobs"
     local JOB_DIR=$(pwd)
     local QSUB_CMD="${QSUB}"
-    while (( "$#" )); do
+    while (( "$#" ))
+    do
         if [ "$1" == "--description" ]
         then
             shift
@@ -61,7 +62,7 @@ jdbsub () {
             local JOB_NAME="$1"
             QSUB_CMD="${QSUB_CMD} \"$1\""
         else
-            QSUB_CMD="${QSUB_CMD} \"$1\""
+            QSUB_CMD="${QSUB_CMD} $1"
         fi
         shift
     done
@@ -71,9 +72,11 @@ jdbsub () {
     then
         return ${EXIT_CODE}
     fi
-    local JOB_TIME=$(data  "+%Y-%m-%d %H:%M:%S")
+    echo "${JOB_ID}"
+    local JOB_TIME=$(date  "+%Y-%m-%d %H:%M:%S")
     echo "${JOB_ID},\"${JOB_NAME}\",\"${JOB_DIR}\",\"${JOB_DESCR}\",${JOB_TIME}" \
         >> "${JOBDB_FILE}"
+    return 0
 }
 
 # ------------------------------------------------------------
@@ -150,8 +153,11 @@ jdbdir () {
 # if the jobdb directory doesn't exist, exit
     if [ ! -e "${JOBDB_DIR}" ]
     then
-        (>&2 echo "### error: jobdb directory ${JOBDB_DIR} doesn't exist")
-        unset JOBDB_DIR
+        if [ "$1" != 'new' ]
+        then
+            (>&2 echo "### error: jobdb directory ${JOBDB_DIR} doesn't exist")
+            unset JOBDB_DIR
+        fi
         return 2
     fi
 }
