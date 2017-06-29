@@ -213,6 +213,36 @@ jdbedit () {
     ${EDITOR} "${JOBDB_FILE}"
 }
 
+jdblist () {
+    local HELP_STR='
+        Usage: jdblist [--help]
+
+        List the jobs using the pager specified by the PAGER
+        environment variable, default to less.
+
+        Options:
+          --help      display this help message'
+    show_help "${HELP_STR}" $@
+    if [ $? -eq 0 ]
+    then
+        return 0
+    fi
+# get the jobdb file, exit if non-zero exit status was returned
+    jdbfile
+    local EXIT_CODE=$?
+    if [ ${EXIT_CODE} -ne 0 ]
+    then
+        return ${EXIT_CODE}
+    fi
+# check whether the PAGER environment variable has been set
+    if [ "x" == "x${PAGER}" ]
+    then
+        PAGER=/usr/bin/less
+    fi
+# start the editor with the jobs file
+    ${PAGER} "${JOBDB_FILE}"
+}
+
 jdbclear () {
     local HELP_STR='
         Usage: jdbclear [--help]
