@@ -17,6 +17,8 @@ job ID, or choose it interactively from a list that can be filtered.
 
 * `jdbsub`: `qsub` wrapper that keeps track of the job's meta-information.
 * `jdbcd`: change directory to a job's submission directory.
+* `jdblist`: show the jobdb file in your favorite pager (defaults to
+    `less`).
 * `jdbedit`: edit the `jobdb` file in your favorite editor.
 * `jdbclear`: clear all entries in the `jobdb` database file.
 
